@@ -86,6 +86,7 @@
     
     // Connect to MongoDB and start the server
   
+    
     mongoose.connect(process.env.MONGO as string)
         .then(() => {
             console.log("MongoDB connected successfully");
