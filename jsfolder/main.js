@@ -72,7 +72,6 @@ app.get('/getUser', ((req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 })));
 // Connect to MongoDB and start the server
-console.log('MongoDB URI:', process.env.MONGO);
 mongoose_1.default.connect(process.env.MONGO)
     .then(() => {
     console.log("MongoDB connected successfully");
