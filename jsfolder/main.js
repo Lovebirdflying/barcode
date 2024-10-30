@@ -12,18 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const email_validator_1 = __importDefault(require("email-validator"));
 const db_1 = __importDefault(require("./helper/db"));
-const dotenv_1 = __importDefault(require("dotenv"));
 require("express-async-errors");
-dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 1000;
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
+app.get('/', (req, res) => {
+    res.send('Welcome to the MY HOME!');
+});
 // Root route to add a user
 app.post('/addUser', ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, phone, profileImage } = req.body;
@@ -32,6 +35,10 @@ app.post('/addUser', ((req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     if (!email_validator_1.default.validate(email)) {
         return res.status(400).json({ message: "Invalid email format." });
+    }
+    if (email === req.body.email) {
+        res.status(404).json({ error: "Email already exist" });
+        return;
     }
     try {
         yield db_1.default.create({ name, email, phone, profileImage });
@@ -44,7 +51,12 @@ app.post('/addUser', ((req, res) => __awaiter(void 0, void 0, void 0, function* 
 })));
 // Route to get a user by UID
 app.get('/getUser', ((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { UserUID } = req.body;
+    const { UserUID } = req.query;
+    console.log("Query parameters:", req.query);
+    console.log("Received UserUID:", UserUID);
+    if (!UserUID) {
+        return res.status(400).json({ message: "UserUID is required" });
+    }
     try {
         const user = yield db_1.default.findOne({ _id: UserUID });
         if (!user) {
@@ -60,6 +72,7 @@ app.get('/getUser', ((req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 })));
 // Connect to MongoDB and start the server
+console.log('MongoDB URI:', process.env.MONGO);
 mongoose_1.default.connect(process.env.MONGO)
     .then(() => {
     console.log("MongoDB connected successfully");
