@@ -38,12 +38,8 @@
         }
         
     
-        if(email === req.body.email){
+       
         
-            res.status(404).json({error:"Email already exist"});
-        
-            return;
-        }
 
         try {
 
@@ -86,7 +82,7 @@
     
     // Connect to MongoDB and start the server
   
-    
+
     mongoose.connect(process.env.MONGO as string)
         .then(() => {
             console.log("MongoDB connected successfully");

@@ -36,10 +36,6 @@ app.post('/addUser', ((req, res) => __awaiter(void 0, void 0, void 0, function* 
     if (!email_validator_1.default.validate(email)) {
         return res.status(400).json({ message: "Invalid email format." });
     }
-    if (email === req.body.email) {
-        res.status(404).json({ error: "Email already exist" });
-        return;
-    }
     try {
         yield db_1.default.create({ name, email, phone, profileImage });
         res.status(200).json({ message: "User added successfully" });
